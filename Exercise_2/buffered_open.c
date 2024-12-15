@@ -100,7 +100,8 @@ int buffered_flush(buffered_file_t *bf) {
             }
             
             free(temp_buffer);
-            lseek(bf->fd, original_offset, SEEK_SET);
+            //added the written buffer size position to original buffer to stay where i have red before
+            lseek(bf->fd, original_offset + bf->write_buffer_pos, SEEK_SET);
         }else {
             written = write(bf->fd, bf->write_buffer + total_written, to_write);
             if (written == -1) {
@@ -142,11 +143,23 @@ ssize_t buffered_write(buffered_file_t *bf, const void *buf, size_t count)
             }
             space_left = BUFFER_SIZE;
         }
-        
+
         // checks if there is enough space left in the buffer to copy the remaining data
         size_t to_copy = (count - written < space_left) ? count - written : space_left;
+        if (bf->preappend) {
+            //saving the current data in temp buffer
+            char *temp_buffer = malloc(bf->write_buffer_pos);
+            memcpy(temp_buffer, bf->write_buffer, bf->write_buffer_pos);
 
-        memcpy(bf->write_buffer + bf->write_buffer_pos, data + written, to_copy);
+            //writing the new data
+            memcpy(bf->write_buffer, data + ((count - to_copy - written) > 0 ? (count - to_copy - written) : 0), to_copy);
+            //returning the old data
+            memcpy(bf->write_buffer + to_copy, temp_buffer, bf->write_buffer_pos);
+
+        } else {
+            
+            memcpy(bf->write_buffer + bf->write_buffer_pos, data + written, to_copy);
+        }
 
         bf->write_buffer_pos += to_copy;
         written += to_copy;

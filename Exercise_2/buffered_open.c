@@ -156,6 +156,7 @@ ssize_t buffered_write(buffered_file_t *bf, const void *buf, size_t count)
             //returning the old data
             memcpy(bf->write_buffer + to_copy, temp_buffer, bf->write_buffer_pos);
 
+            free(temp_buffer);
         } else {
             
             memcpy(bf->write_buffer + bf->write_buffer_pos, data + written, to_copy);

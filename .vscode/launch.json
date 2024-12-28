@@ -6,7 +6,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/Exercise_3/a.out",
-      "args": ["./bla.txt", "./test/bla123.txt", "-l"],
+      "args": ["./test", "./test2"],
       "stopAtEntry": false,
       "cwd": "${fileDirname}",
       "environment": [],

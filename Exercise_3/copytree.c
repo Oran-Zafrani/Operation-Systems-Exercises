@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <dirent.h>
 
 
 
@@ -71,7 +72,117 @@ void copy_file(const char *src, const char *dest, int copy_symlinks, int copy_pe
     }
 }
 
+void create_directories(const char *src, const char *dest, int copy_permissions) {
+    struct stat src_stat;
+    if (stat(src, &src_stat) == -1) {
+        perror("COMMAND failed");
+        exit(EXIT_FAILURE);
+    }
+
+    if (mkdir(dest, 0755) == -1) {
+        perror("COMMAND failed");
+        exit(EXIT_FAILURE);
+    }
+
+    if (copy_permissions) {
+        if (chmod(dest, src_stat.st_mode) == -1) {
+            perror("COMMAND failed");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    DIR *dir;
+    struct dirent *entry;
+
+    if ((dir = opendir(src)) == NULL) {
+        perror("COMMAND failed");
+        exit(EXIT_FAILURE);
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        char src_path[4096];
+        char dest_path[4096];
+
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+        
+        src_path[0] = '\0';
+        strcpy(src_path, src);
+        strcat(src_path, "/");
+        strcat(src_path, entry->d_name);
+
+        struct stat entry_stat;
+        if (stat(src_path, &entry_stat) == -1) {
+            perror("COMMAND failed");
+            closedir(dir);
+            exit(EXIT_FAILURE);
+        }
+
+
+        if (S_ISDIR(entry_stat.st_mode)) {
+
+            dest_path[0] = '\0';
+            strcpy(dest_path, dest);
+            strcat(dest_path, "/");
+            strcat(dest_path, entry->d_name);
+
+            create_directories(src_path, dest_path, copy_permissions);
+        }
+    }
+
+    closedir(dir);
+}
+
+
 void copy_directory(const char *src, const char *dest, int copy_symlinks, int copy_permissions) {
 
+    create_directories(src, dest, copy_permissions);
+    copy_file_recursive(src, dest, copy_symlinks, copy_permissions);
+}
+
+
+void copy_file_recursive(const char *src, const char *dest, int copy_symlinks, int copy_permissions) {
+    DIR *dir;
+    struct dirent *entry;
+
+    if ((dir = opendir(src)) == NULL) {
+        perror("COMMAND failed");
+        exit(EXIT_FAILURE);
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        char src_path[4096];
+        char dest_path[4096];
+
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        src_path[0] = '\0';
+        strcpy(src_path, src);
+        strcat(src_path, "/");
+        strcat(src_path, entry->d_name);
+
+        dest_path[0] = '\0';
+        strcpy(dest_path, dest);
+        strcat(dest_path, "/");
+        strcat(dest_path, entry->d_name);
+
+        struct stat entry_stat;
+        if (stat(src_path, &entry_stat) == -1) {
+            perror("COMMAND failed");
+            closedir(dir);
+            exit(EXIT_FAILURE);
+        }
+
+        if (S_ISDIR(entry_stat.st_mode)) {
+            copy_file_recursive(src_path, dest_path, copy_symlinks, copy_permissions);
+        } else {
+            copy_file(src_path, dest_path, copy_symlinks, copy_permissions);
+        }
+    }
+
+    closedir(dir);
 }
 #endif // COPYTREE_H

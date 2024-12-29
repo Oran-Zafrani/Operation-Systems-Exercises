@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <string.h>
+#include <errno.h>
 
 
 void copy_file(const char *src, const char *dest, int copy_symlinks, int copy_permissions) {
@@ -74,13 +75,34 @@ void copy_file(const char *src, const char *dest, int copy_symlinks, int copy_pe
 
 void create_directories(const char *src, const char *dest, int copy_permissions) {
     struct stat src_stat;
-    if (stat(src, &src_stat) == -1) {
-        perror("file stat failed");
+    char temp_path[1024];
+    char *token = NULL;
+    char current_path[1024] = "";
+
+    // Copy the path to a temporary buffer
+    strncpy(temp_path, dest, sizeof(temp_path) - 1);
+    temp_path[sizeof(temp_path) - 1] = '\0';
+
+    // Use strtok to split the path by "/"
+    token = strtok(temp_path, "/");
+    while (token != NULL) {
+        // Append the token to the current path
+        strcat(current_path, token);
+        strcat(current_path, "/");
+
+        // Create the current directory if it doesn't exist
+        if (mkdir(current_path, 0755) != 0 && errno != EEXIST) {
+        perror("make directory failed");
         exit(EXIT_FAILURE);
+        }
+
+        // Get the next token
+        token = strtok(NULL, "/");
     }
 
-    if (mkdir(dest, 0755) == -1) {
-        perror("make directory failed");
+
+    if (stat(src, &src_stat) == -1) {
+        perror("file stat failed");
         exit(EXIT_FAILURE);
     }
 

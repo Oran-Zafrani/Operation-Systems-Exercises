@@ -6,7 +6,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/Exercise_3/a.out",
-      "args": ["./test", "./test2"],
+      "args": ["Exercise3_test_src", "Exercise3_test_dest", "-p", "-l"],
       "stopAtEntry": false,
       "cwd": "${fileDirname}",
       "environment": [],

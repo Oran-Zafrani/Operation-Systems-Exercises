@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <dirent.h>
-
+#include <string.h>
 
 
 void copy_file(const char *src, const char *dest, int copy_symlinks, int copy_permissions) {
@@ -17,7 +17,7 @@ void copy_file(const char *src, const char *dest, int copy_symlinks, int copy_pe
 
     src_fd = open(src, O_RDONLY);
     if (src_fd == -1) {
-        perror("COMMAND failed");
+        perror("open file failed");
         exit(EXIT_FAILURE);
     }
 
@@ -29,7 +29,7 @@ void copy_file(const char *src, const char *dest, int copy_symlinks, int copy_pe
         if (link_length > 0) {
             link_target[link_length] = '\0';
             if (symlink(link_target, dest) == -1) {
-                perror("COMMAND failed");
+                perror("symlink failed");
                 close(src_fd);
                 exit(EXIT_FAILURE);
             }
@@ -40,7 +40,7 @@ void copy_file(const char *src, const char *dest, int copy_symlinks, int copy_pe
 
     dest_fd = open(dest, O_WRONLY | O_CREAT | O_TRUNC, 0644); 
     if (dest_fd == -1) {
-        perror("COMMAND failed");
+        perror("open file failed");
         close(src_fd);
         exit(EXIT_FAILURE);
     }
@@ -48,7 +48,7 @@ void copy_file(const char *src, const char *dest, int copy_symlinks, int copy_pe
     while ((bytes_read = read(src_fd, buffer, sizeof(buffer))) > 0) {
         bytes_written = write(dest_fd, buffer, bytes_read);
         if (bytes_written != bytes_read) {
-            perror("COMMAND failed");
+            perror("file write failed");
             close(src_fd);
             close(dest_fd);
             exit(EXIT_FAILURE);
@@ -57,14 +57,14 @@ void copy_file(const char *src, const char *dest, int copy_symlinks, int copy_pe
 
     struct stat src_stat;
     if (fstat(src_fd, &src_stat) == -1) {
-        perror("COMMAND failed");
+        perror("file fstat failed");
         close(src_fd);
         exit(EXIT_FAILURE);
     }
 
     if (copy_permissions) {
         if (fchmod(dest_fd, src_stat.st_mode) == -1) {
-            perror("COMMAND failed");
+            perror("file fchmod failed");
             close(src_fd);
             close(dest_fd);
             exit(EXIT_FAILURE);
@@ -75,18 +75,18 @@ void copy_file(const char *src, const char *dest, int copy_symlinks, int copy_pe
 void create_directories(const char *src, const char *dest, int copy_permissions) {
     struct stat src_stat;
     if (stat(src, &src_stat) == -1) {
-        perror("COMMAND failed");
+        perror("file stat failed");
         exit(EXIT_FAILURE);
     }
 
     if (mkdir(dest, 0755) == -1) {
-        perror("COMMAND failed");
+        perror("make directory failed");
         exit(EXIT_FAILURE);
     }
 
     if (copy_permissions) {
         if (chmod(dest, src_stat.st_mode) == -1) {
-            perror("COMMAND failed");
+            perror("file chmod failed");
             exit(EXIT_FAILURE);
         }
     }
@@ -95,7 +95,7 @@ void create_directories(const char *src, const char *dest, int copy_permissions)
     struct dirent *entry;
 
     if ((dir = opendir(src)) == NULL) {
-        perror("COMMAND failed");
+        perror("open directory failed");
         exit(EXIT_FAILURE);
     }
 
@@ -114,7 +114,7 @@ void create_directories(const char *src, const char *dest, int copy_permissions)
 
         struct stat entry_stat;
         if (stat(src_path, &entry_stat) == -1) {
-            perror("COMMAND failed");
+            perror("file stat failed");
             closedir(dir);
             exit(EXIT_FAILURE);
         }
@@ -147,7 +147,7 @@ void copy_file_recursive(const char *src, const char *dest, int copy_symlinks, i
     struct dirent *entry;
 
     if ((dir = opendir(src)) == NULL) {
-        perror("COMMAND failed");
+        perror("open directory failed");
         exit(EXIT_FAILURE);
     }
 
@@ -171,7 +171,7 @@ void copy_file_recursive(const char *src, const char *dest, int copy_symlinks, i
 
         struct stat entry_stat;
         if (stat(src_path, &entry_stat) == -1) {
-            perror("COMMAND failed");
+            perror("file stat failed");
             closedir(dir);
             exit(EXIT_FAILURE);
         }

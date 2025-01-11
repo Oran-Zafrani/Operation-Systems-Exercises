@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": ["config.txt"],
+      "stopAtEntry": false,
+      "externalConsole": false,
+      "cwd": "/home/osboxes/Documents/CS_Projects/OperationSystems/Operation-Systems-Exercises/Exercise_4",
+      "program": "/home/osboxes/Documents/CS_Projects/OperationSystems/Operation-Systems-Exercises/Exercise_4/ex4.out",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}

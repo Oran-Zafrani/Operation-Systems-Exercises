@@ -56,17 +56,16 @@ private:
     CountingSemaphore full;       // Semaphore to track filled slots
 
 public:
-    // Constructor
     BoundedBuffer(int size);
 
-    // Insert a string into the buffer
     void insert(char* s);
 
-    // Remove a string from the buffer
     char* remove();
 
+    bool isEmpty();
+    
     // Destructor
     ~BoundedBuffer();
 };
 
-#endif // BOUNDED_BUFFER_H
+#endif 

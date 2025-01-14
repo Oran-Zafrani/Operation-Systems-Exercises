@@ -6,23 +6,28 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/Exercise_3/a.out",
-      "args": ["Exercise3_test_src", "Exercise3_test_dest", "-p", "-l"],
+      "args": [
+        "Exercise3_test_src",
+        "Exercise3_test_dest",
+        "-p",
+        "-l"
+      ],
       "stopAtEntry": false,
       "cwd": "${fileDirname}",
       "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
       "setupCommands": [
-          {
-              "description": "Enable pretty-printing for gdb",
-              "text": "-enable-pretty-printing",
-              "ignoreFailures": true
-          },
-          {
-              "description": "Set Disassembly Flavor to Intel",
-              "text": "-gdb-set disassembly-flavor intel",
-              "ignoreFailures": true
-          }
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        },
+        {
+          "description": "Set Disassembly Flavor to Intel",
+          "text": "-gdb-set disassembly-flavor intel",
+          "ignoreFailures": true
+        }
       ]
     },
     {
@@ -32,8 +37,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/osboxes/Documents/CS_Projects/OperationSystems/Operation-Systems-Exercises/Exercise_2",
-      "program": "/home/osboxes/Documents/CS_Projects/OperationSystems/Operation-Systems-Exercises/Exercise_2/build/Debug/outDebug",
+      "cwd": "/home/osboxes/Documents/CS_Projects/OperationSystems/Operation-Systems-Exercises/Exercise_4",
+      "program": "/home/osboxes/Documents/CS_Projects/OperationSystems/Operation-Systems-Exercises/Exercise_4/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

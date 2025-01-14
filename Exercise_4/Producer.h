@@ -17,14 +17,12 @@ private:
     std::string getRandomCategory();
 
 public:
-    // Constructor
     Producer(int id, int totalProducts, int bufferSize);
 
-    // Method to produce strings to the buffer
     void produce();
 
     // Method to get the BoundedBuffer
     BoundedBuffer& getBuffer();
 };
 
-#endif // PRODUCER_H
+#endif 

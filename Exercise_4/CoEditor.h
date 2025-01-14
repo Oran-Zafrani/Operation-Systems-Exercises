@@ -13,11 +13,9 @@ private:
     std::string type;            // Type of the CoEditor (sports/news/weather)
 
 public:
-    // Constructor
     CoEditor(BoundedBuffer& input, BoundedBuffer& shared, const std::string& editorType);
 
-    // Editing process; consumes messages from the input buffer and passes them to the shared buffer
     void edit();
 };
 
-#endif // COEDITOR_H
+#endif 

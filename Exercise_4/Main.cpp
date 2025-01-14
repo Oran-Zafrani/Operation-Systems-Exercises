@@ -11,7 +11,7 @@
 #include "ScreenManager.h"
 
 int main(int argc, char* argv[]) {
-    // Check if the input file is provided
+    // valifation
     if (argc != 2) {
         std::cerr << "Usage: " << argv[0] << " <input_file.txt>" << std::endl;
         return 1;
@@ -24,12 +24,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Variables to store data
     std::vector<Producer*> producers;          // Store producers
     std::vector<BoundedBuffer*> producerBuffers; // Store each producer's buffer (via getBuffer())
     int coEditorQueueSize = 0;                 // Size of the Co-Editor queue
 
-    // Read and parse the input file
     std::string line;
     while (std::getline(inputFile, line)) {
         std::istringstream iss(line);
@@ -47,13 +45,12 @@ int main(int argc, char* argv[]) {
             std::getline(inputFile, line);
             int queueSize = std::stoi(line.substr(line.find('=') + 1));
 
-            // Create the producer
             Producer* producer = new Producer(std::stoi(producerId), numberOfProducts, queueSize);
 
             // Store the producer and its buffer
             producers.push_back(producer);
             BoundedBuffer* buffer = &producer->getBuffer();
-            producerBuffers.push_back(buffer); // Use the getter to retrieve the buffer
+            producerBuffers.push_back(buffer); 
         }
         // Check for Co-Editor queue size line
         else if (line.find("Co-Editor queue size") != std::string::npos) {
@@ -61,26 +58,21 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    inputFile.close(); // Close the file
+    inputFile.close(); 
 
-    // Ensure we have valid data
+    // vlidations
     if (producers.empty() || coEditorQueueSize <= 0) {
         std::cerr << "Error: Invalid input file format or missing data." << std::endl;
         return 1;
     }
 
-    // Create the Dispatcher
     Dispatcher dispatcher(producerBuffers, coEditorQueueSize);
-
-    // Create the shared buffer for the ScreenManager
+    
     BoundedBuffer sharedBuffer(coEditorQueueSize);
-
-    // Create CoEditors
     CoEditor sportsEditor(dispatcher.getSportsBuffer(), sharedBuffer, "sports");
     CoEditor newsEditor(dispatcher.getNewsBuffer(), sharedBuffer, "news");
     CoEditor weatherEditor(dispatcher.getWeatherBuffer(), sharedBuffer, "weather");
 
-    // Create the ScreenManager
     ScreenManager screenManager(sharedBuffer);
 
     // Start Producer threads

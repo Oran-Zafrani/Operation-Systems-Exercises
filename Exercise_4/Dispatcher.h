@@ -19,19 +19,15 @@ private:
     void sortMessage(const std::string& message);
 
 public:
-    // Constructor
     Dispatcher(const std::vector<BoundedBuffer*>& buffers, int dispatcherBufferSize);
 
-    // Dispatch messages from producers' queues
     void dispatch();
 
-    // Check if all producers are done
     bool areAllProducersDone();
 
-    // Getter methods for the dispatcher buffers
     BoundedBuffer& getSportsBuffer();
     BoundedBuffer& getNewsBuffer();
     BoundedBuffer& getWeatherBuffer();
 };
 
-#endif // DISPATCHER_H
+#endif 

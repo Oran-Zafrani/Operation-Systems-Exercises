@@ -6,15 +6,13 @@
 
 class ScreenManager {
 private:
-    BoundedBuffer& sharedBuffer; // The single shared buffer from the CoEditors
+    BoundedBuffer& sharedBuffer; // The single shared buffer
     int doneCount;               // Count of "DONE" messages received
 
 public:
-    // Constructor
     ScreenManager(BoundedBuffer& shared);
 
-    // Process messages from the shared buffer
     void process();
 };
 
-#endif // SCREENMANAGER_H
+#endif 
